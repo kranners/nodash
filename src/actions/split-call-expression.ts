@@ -13,6 +13,39 @@ const getNewFunctionName = (
   return `get${identifier.charAt(0).toUpperCase() + identifier.slice(1)}`;
 };
 
+const getReplacementCallExpression = (
+  variableDeclaration: ts.VariableDeclaration | undefined,
+  originalCallExpression: ts.CallExpression,
+  newFunctionIdentifier: ts.Identifier,
+): ts.VariableStatement | ts.CallExpression => {
+  if (variableDeclaration === undefined) {
+    return ts.factory.createCallExpression(
+      newFunctionIdentifier,
+      originalCallExpression.typeArguments,
+      originalCallExpression.arguments,
+    );
+  }
+
+  return ts.factory.createVariableStatement(
+    undefined,
+    ts.factory.createVariableDeclarationList(
+      [
+        ts.factory.createVariableDeclaration(
+          variableDeclaration.name,
+          undefined,
+          undefined,
+          ts.factory.createCallExpression(
+            newFunctionIdentifier,
+            originalCallExpression.typeArguments,
+            originalCallExpression.arguments,
+          ),
+        ),
+      ],
+      ts.NodeFlags.Const,
+    ),
+  );
+};
+
 export const splitCallExpression: RefactorAction = (node, source, document) => {
   const callExpression = getFirstMatchingAncestor(node, ts.isCallExpression);
 
@@ -29,13 +62,15 @@ export const splitCallExpression: RefactorAction = (node, source, document) => {
     return;
   }
 
-  const originalVariableDeclaration = getFirstMatchingAncestor(
+  const variableDeclarationList = getFirstMatchingAncestor(
     callExpression,
-    ts.isVariableDeclaration,
+    ts.isVariableDeclarationList,
   );
 
+  const variableDeclaration = variableDeclarationList?.declarations[0];
+
   const newFunctionIdentifier = ts.factory.createIdentifier(
-    getNewFunctionName(originalVariableDeclaration),
+    getNewFunctionName(variableDeclaration),
   );
 
   const newFunctionVariable = ts.factory.createVariableStatement(
@@ -53,15 +88,18 @@ export const splitCallExpression: RefactorAction = (node, source, document) => {
     ),
   );
 
-  const replacementCallExpression = ts.factory.createCallExpression(
+  const replacementCallExpression = getReplacementCallExpression(
+    variableDeclaration,
+    callExpression,
     newFunctionIdentifier,
-    callExpression.typeArguments,
-    callExpression.arguments,
   );
 
-  const callExpressionRange = new vscode.Range(
-    document.positionAt(callExpression.pos),
-    document.positionAt(callExpression.end),
+  const newVariableDeclarationRange = new vscode.Range(
+    document.positionAt(variableDeclarationList?.pos ?? callExpression.pos),
+    // End position needs to be shifted over by one to account for the trailing semicolon
+    document
+      .positionAt(variableDeclarationList?.end ?? callExpression.end)
+      .translate(0, 1),
   );
 
   const action = new vscode.CodeAction(
@@ -84,16 +122,16 @@ export const splitCallExpression: RefactorAction = (node, source, document) => {
 
   action.edit = new vscode.WorkspaceEdit();
 
-  const newVariablePosition =
-    callExpressionRange.start.line === 0
-      ? new vscode.Position(0, callExpressionRange.start.character)
-      : callExpressionRange.start.translate(-2, 0);
+  action.edit.replace(
+    document.uri,
+    newVariableDeclarationRange,
+    printedFunctionVariable,
+  );
 
-  action.edit.replace(document.uri, callExpressionRange, printedCallExpression);
   action.edit.insert(
     document.uri,
-    newVariablePosition,
-    printedFunctionVariable,
+    newVariableDeclarationRange.end.translate(1, 0),
+    printedCallExpression,
   );
 
   return action;
