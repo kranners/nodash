@@ -4,11 +4,13 @@ import { RefactorAction } from './actions';
 import { getDescendantAtPosition } from './traverse';
 import { convertTernary } from './actions/convert-ternary';
 import { splitCallExpression } from './actions/split-call-expression';
-import { invertAndSimplifyIfElse } from './actions/simplify-if-else';
+import { invertAndSimplifyIfElse } from './actions/invert-simplify-if-else';
+import { simplifyIfElse } from './actions/simplify-if-else';
 
 export const AVAILABLE_ACTIONS: RefactorAction[] = [
   convertTernary,
   splitCallExpression,
+  simplifyIfElse,
   invertAndSimplifyIfElse,
 ];
 

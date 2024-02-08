@@ -3,7 +3,25 @@ import * as vscode from 'vscode';
 import { RefactorAction } from '.';
 import { getFirstMatchingAncestor } from '../traverse';
 
-export const simplifyIfElse: RefactorAction = (node, source, document) => {
+const invertExpression = (expression: ts.Expression): ts.Expression => {
+  if (
+    ts.isPrefixUnaryExpression(expression) &&
+    expression.operator === ts.SyntaxKind.ExclamationToken
+  ) {
+    return expression.operand;
+  }
+
+  return ts.factory.createPrefixUnaryExpression(
+    ts.SyntaxKind.ExclamationToken,
+    expression,
+  );
+};
+
+export const invertAndSimplifyIfElse: RefactorAction = (
+  node,
+  source,
+  document,
+) => {
   const ifStatement = getFirstMatchingAncestor(node, ts.isIfStatement);
 
   if (ifStatement === undefined) return;
@@ -13,8 +31,8 @@ export const simplifyIfElse: RefactorAction = (node, source, document) => {
   if (!ts.isBlock(ifStatement.elseStatement)) return;
 
   const replacementIfStatement = ts.factory.createIfStatement(
-    ifStatement.expression,
-    ifStatement.thenStatement,
+    invertExpression(ifStatement.expression),
+    ifStatement.elseStatement,
   );
 
   const ifStatementRange = new vscode.Range(
@@ -23,7 +41,7 @@ export const simplifyIfElse: RefactorAction = (node, source, document) => {
   );
 
   const action = new vscode.CodeAction(
-    'Simplify if/else statement',
+    'Invert and simplify if/else statement',
     vscode.CodeActionKind.QuickFix,
   );
 
@@ -36,7 +54,7 @@ export const simplifyIfElse: RefactorAction = (node, source, document) => {
 
   const printedRemainingStatements = printer.printList(
     ts.ListFormat.MultiLine,
-    ifStatement.elseStatement.statements,
+    ifStatement.thenStatement.statements,
     source,
   );
 

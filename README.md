@@ -1,13 +1,13 @@
 # nodash 🙅🚫
 
-VSCode extension for common JavaScript and TypeScript refactors and actions.
+VSCode extension for common JavaScript and TypeScript refactors and actions 📝
 
 ### Planned features
 
 - [x] Convert ternary statement to if/else IIFE
 - [x] Split IIFE into declaration and call expression
 - [x] Simplify if/else statement into early return
-- [ ] Invert and simplify if/else statement into early return
+- [x] Invert and simplify if/else statement into early return
 - [ ] Refactor Lodash map/filter/forEach into ES equivalent
 - [ ] Refactor Lodash isNull
 
