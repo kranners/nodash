@@ -1,5 +1,5 @@
 {
-  "name": "refacta-js",
+  "name": "nodash",
   "publisher": "aaron-pierce",
   "version": "0.0.1",
   "description": "VSCode extension for refactoring common JavaScript",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kranners/refacta-js.git"
+    "url": "git+https://github.com/kranners/nodash.git"
   },
   "keywords": [
     "vscode",
@@ -36,9 +36,9 @@
   "author": "",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/kranners/refacta-js/issues"
+    "url": "https://github.com/kranners/nodash/issues"
   },
-  "homepage": "https://github.com/kranners/refacta-js#readme",
+  "homepage": "https://github.com/kranners/nodash#readme",
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.3",
     "@types/chai": "^4.3.11",

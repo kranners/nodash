@@ -51,7 +51,7 @@ class RefactorProvider implements vscode.CodeActionProvider {
   }
 }
 
-export const channel = vscode.window.createOutputChannel('Refacta', {
+export const channel = vscode.window.createOutputChannel('Nodash', {
   log: true,
 });
 
