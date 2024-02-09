@@ -1,5 +1,6 @@
 {
   "name": "refacta-js",
+  "publisher": "aaron-pierce",
   "version": "0.0.1",
   "description": "VSCode extension for refactoring common JavaScript",
   "engines": {
