@@ -6,12 +6,18 @@ import { convertTernary } from './actions/convert-ternary';
 import { splitCallExpression } from './actions/split-call-expression';
 import { invertAndSimplifyIfElse } from './actions/invert-simplify-if-else';
 import { simplifyIfElse } from './actions/simplify-if-else';
+import { replaceMappingFunction } from './actions/replace-mapping-function';
+import { replaceLodashFirst } from './actions/replace-lodash-first';
+import { replaceLodashGet } from './actions/replace-lodash-get';
 
 export const AVAILABLE_ACTIONS: RefactorAction[] = [
   convertTernary,
   splitCallExpression,
   simplifyIfElse,
   invertAndSimplifyIfElse,
+  replaceMappingFunction,
+  replaceLodashFirst,
+  replaceLodashGet,
 ];
 
 const CODE_ACTION_KINDS = [

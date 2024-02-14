@@ -39,3 +39,14 @@ export function getDescendantAtPosition(
 
   return node;
 }
+
+export const LODASH_IDENTIFIERS = ['_', 'lodash', 'underscore'];
+
+export const isPotentialLodashExpression = (
+  node: ts.Expression,
+): node is ts.Identifier | ts.PropertyAccessExpression => {
+  if (ts.isIdentifier(node)) return true;
+  if (!ts.isPropertyAccessExpression(node)) return false;
+
+  return LODASH_IDENTIFIERS.includes(node.expression.getText());
+};
