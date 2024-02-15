@@ -6,6 +6,11 @@
   "engines": {
     "vscode": "^1.85.0"
   },
+  "release": {
+    "branches": [
+      "main"
+    ]
+  },
   "categories": [
     "Debuggers",
     "Formatters",
