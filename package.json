@@ -13,8 +13,32 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
-      [ "@semantic-release/npm", { "npmPublish": false } ],
-      "@semantic-release/github"
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "prepareCmd": "npm run package"
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            "nodash-*.vsix"
+          ]
+        }
+      ],
+      [
+        "@semantic-release/exec",
+        {
+          "publishCmd": "npm run publish"
+        }
+      ]
     ]
   },
   "categories": [
@@ -35,7 +59,7 @@
     "package": "vsce package",
     "pretest": "npm run build",
     "vscode:prepublish": "npm run build",
-    "release": "semantic-release"
+    "publish": "vsce publish"
   },
   "repository": {
     "type": "git",
@@ -52,6 +76,7 @@
   },
   "homepage": "https://github.com/kranners/nodash#readme",
   "devDependencies": {
+    "@semantic-release/exec": "^6.0.3",
     "@tsconfig/recommended": "^1.0.3",
     "@types/chai": "^4.3.11",
     "@types/lodash": "^4.14.202",
