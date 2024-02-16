@@ -2,14 +2,24 @@
 
 VSCode extension for common JavaScript and TypeScript refactors and actions 📝
 
-### Planned features
+### Installation
 
-- [x] Convert ternary statement to if/else IIFE
-- [x] Split IIFE into declaration and call expression
-- [x] Simplify if/else statement into early return
-- [x] Invert and simplify if/else statement into early return
-- [ ] Refactor Lodash map/filter/forEach into ES equivalent
-- [ ] Refactor Lodash isNull
+Nodash can be installed one of a few ways:
+
+1. From the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=aaron-pierce.nodash)
+2. Download [the .vsix from the latest release](https://github.com/kranners/nodash/releases) and install with:
+
+```shell
+code --install-extension ./path/to/nodash.vsix
+```
+
+3. Clone repository and build from source with:
+
+```shell
+npm install
+npm run package
+code --install-extension ./path/to/nodash.vsix
+```
 
 ### Existing features
 
@@ -136,4 +146,45 @@ const fruits = ["banana", "apple", "mango"];
 const angryFruits = fruits.map((fruit) => fruit.toUpperCase());
 const bFruits = fruits.filter((fruit) => fruit[0] === "b");
 fruits.forEach((fruit) => console.log(`${fruit} is yum!`));
+```
+
+## Replace unnecessary first()
+
+Will take a Lodash `first()` call, like:
+
+```js
+const items = [...];
+
+const firstItem = first(items);
+```
+
+And replace it with an element 0 access, like:
+
+```js
+const items = [...];
+
+const firstItem = items[0];
+```
+
+## Replace unnecessary get()
+
+Will take a Lodash `get()` call like:
+
+```js
+const appliedOffer = get(store, "offer", null);
+
+const message = get(error, "errors[0].message", error.message);
+
+const scrollTopBefore = _.get(document, "body.scrollTop");
+```
+
+And replace it with a chain of access expressions:
+
+```js
+const appliedOffer = CartStore.offer ?? null;
+
+// If your call has a default value, all the access expressions will be null coalescing
+const message = error?.errors?.[0].message ?? error.message;
+
+const scrollTopBefore = document.body.scrollTop;
 ```
