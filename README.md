@@ -188,3 +188,35 @@ const message = error?.errors?.[0].message ?? error.message;
 
 const scrollTopBefore = document.body.scrollTop;
 ```
+
+## Case switch to if
+
+Will take in an arbitrary case switch like:
+```js
+function getCardContent(cardType) {
+  switch (cardType) {
+    case "banana":
+    case "menu":
+      console.log("No content");
+      break;
+    case "apple":
+      return "Apples are red and crunchy. Usually. Maybe.";
+    default:
+      return "Click here to buy fantastic products:";
+  }
+}
+```
+
+And replace it with a series of if statements:
+```js
+function getCardContent(cardType) {
+  if (cardType === "menu" || cardType === "banana") {
+    console.log("No content");
+    return;
+  }
+  if (cardType === "apple") {
+      return "Apples are red and crunchy. Usually. Maybe.";
+  }
+  return "Click here to buy fantastic products:";
+}
+```

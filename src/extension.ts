@@ -9,6 +9,7 @@ import { simplifyIfElse } from './actions/simplify-if-else';
 import { replaceMappingFunction } from './actions/replace-mapping-function';
 import { replaceLodashFirst } from './actions/replace-lodash-first';
 import { replaceLodashGet } from './actions/replace-lodash-get';
+import { caseSwitchToIf } from './actions/case-switch-to-if';
 
 export const AVAILABLE_ACTIONS: RefactorAction[] = [
   convertTernary,
@@ -18,6 +19,7 @@ export const AVAILABLE_ACTIONS: RefactorAction[] = [
   replaceMappingFunction,
   replaceLodashFirst,
   replaceLodashGet,
+  caseSwitchToIf,
 ];
 
 const CODE_ACTION_KINDS = [
