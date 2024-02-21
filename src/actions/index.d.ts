@@ -6,3 +6,9 @@ export type RefactorAction = (
   source: ts.SourceFile,
   document: vscode.TextDocument,
 ) => vscode.CodeAction | undefined;
+
+export type RefactorActionSet = (
+  node: ts.Node,
+  source: ts.SourceFile,
+  document: vscode.TextDocument,
+) => vscode.CodeAction[];

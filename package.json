@@ -69,8 +69,9 @@
     "build": "tsc",
     "package": "vsce package",
     "pretest": "npm run build",
+    "publish": "vsce publish",
     "vscode:prepublish": "npm run build",
-    "publish": "vsce publish"
+    "vscode:install": "vsce package && code --install-extension nodash-${npm_package_version}.vsix"
   },
   "repository": {
     "type": "git",

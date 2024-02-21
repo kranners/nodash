@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import * as vscode from 'vscode';
-import { RefactorAction } from './actions';
+import { RefactorAction, RefactorActionSet } from './actions';
 import { getDescendantAtPosition } from './traverse';
 import { convertTernary } from './actions/convert-ternary';
 import { splitCallExpression } from './actions/split-call-expression';
@@ -9,8 +9,10 @@ import { simplifyIfElse } from './actions/simplify-if-else';
 import { replaceMappingFunction } from './actions/replace-mapping-function';
 import { replaceLodashFirst } from './actions/replace-lodash-first';
 import { replaceLodashGet } from './actions/replace-lodash-get';
+import { caseSwitchToIf } from './actions/case-switch-to-if';
+import { replaceIdentifierCasing } from './actions/replace-identifier-casing';
 
-export const AVAILABLE_ACTIONS: RefactorAction[] = [
+const AVAILABLE_ACTIONS: RefactorAction[] = [
   convertTernary,
   splitCallExpression,
   simplifyIfElse,
@@ -18,7 +20,10 @@ export const AVAILABLE_ACTIONS: RefactorAction[] = [
   replaceMappingFunction,
   replaceLodashFirst,
   replaceLodashGet,
+  caseSwitchToIf,
 ];
+
+const AVAILABLE_ACTION_SETS: RefactorActionSet[] = [replaceIdentifierCasing];
 
 const CODE_ACTION_KINDS = [
   vscode.CodeActionKind.QuickFix,
@@ -32,6 +37,10 @@ const SUPPORTED_LANGUAGES = [
   'typescript',
   'typescriptreact',
 ];
+
+export const channel = vscode.window.createOutputChannel('Nodash', {
+  log: true,
+});
 
 class RefactorProvider implements vscode.CodeActionProvider {
   provideCodeActions(
@@ -49,17 +58,15 @@ class RefactorProvider implements vscode.CodeActionProvider {
 
     const actions = AVAILABLE_ACTIONS.map((action) =>
       action(node, source, document),
-    );
+    ).filter((action): action is vscode.CodeAction => action !== undefined);
 
-    return actions.filter(
-      (action): action is vscode.CodeAction => action !== undefined,
-    );
+    const actionsFromSets = AVAILABLE_ACTION_SETS.map((actionSet) =>
+      actionSet(node, source, document),
+    ).flat();
+
+    return [...actions, ...actionsFromSets];
   }
 }
-
-export const channel = vscode.window.createOutputChannel('Nodash', {
-  log: true,
-});
 
 export function activate(context: vscode.ExtensionContext) {
   channel.appendLine('Extension activated 🎉');
