@@ -1,3 +1,11 @@
+# [1.2.0](https://github.com/kranners/nodash/compare/v1.1.0...v1.2.0) (2024-02-29)
+
+
+### Features
+
+* **actions:** Adding case switch to if statements action ([045f569](https://github.com/kranners/nodash/commit/045f5692d227739b9672598f57b758ea2a5e0972))
+* **extension:** adding support for asynchronous action sets, finishing implementation of casing conversion ([9225e59](https://github.com/kranners/nodash/commit/9225e598fcfb9473c26793f7e9f56ddee878d502))
+
 # [1.1.0](https://github.com/kranners/nodash/compare/v1.0.1...v1.1.0) (2024-02-21)
 
 
