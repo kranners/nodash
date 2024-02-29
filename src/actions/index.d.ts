@@ -12,3 +12,9 @@ export type RefactorActionSet = (
   source: ts.SourceFile,
   document: vscode.TextDocument,
 ) => vscode.CodeAction[];
+
+export type AsyncRefactorActionSet = (
+  node: ts.Node,
+  source: ts.SourceFile,
+  document: vscode.TextDocument,
+) => Promise<vscode.CodeAction[]>;

@@ -1,6 +1,10 @@
 import * as ts from 'typescript';
 import * as vscode from 'vscode';
-import { RefactorAction, RefactorActionSet } from './actions';
+import {
+  AsyncRefactorActionSet,
+  RefactorAction,
+  RefactorActionSet,
+} from './actions';
 import { getDescendantAtPosition } from './traverse';
 import { convertTernary } from './actions/convert-ternary';
 import { splitCallExpression } from './actions/split-call-expression';
@@ -10,7 +14,7 @@ import { replaceMappingFunction } from './actions/replace-mapping-function';
 import { replaceLodashFirst } from './actions/replace-lodash-first';
 import { replaceLodashGet } from './actions/replace-lodash-get';
 import { caseSwitchToIf } from './actions/case-switch-to-if';
-import { replaceIdentifierCasing } from './actions/replace-identifier-casing';
+import { convertLiteralCasing } from './actions/convert-literal-casing';
 
 const AVAILABLE_ACTIONS: RefactorAction[] = [
   convertTernary,
@@ -23,7 +27,11 @@ const AVAILABLE_ACTIONS: RefactorAction[] = [
   caseSwitchToIf,
 ];
 
-const AVAILABLE_ACTION_SETS: RefactorActionSet[] = [replaceIdentifierCasing];
+const AVAILABLE_ACTION_SETS: RefactorActionSet[] = [];
+
+const AVAILABLE_ASYNC_ACTION_SETS: AsyncRefactorActionSet[] = [
+  convertLiteralCasing,
+];
 
 const CODE_ACTION_KINDS = [
   vscode.CodeActionKind.QuickFix,
@@ -43,10 +51,10 @@ export const channel = vscode.window.createOutputChannel('Nodash', {
 });
 
 class RefactorProvider implements vscode.CodeActionProvider {
-  provideCodeActions(
+  async provideCodeActions(
     document: vscode.TextDocument,
     range: vscode.Range | vscode.Selection,
-  ): vscode.CodeAction[] {
+  ): Promise<vscode.CodeAction[]> {
     const source = ts.createSourceFile(
       document.fileName,
       document.getText(),
@@ -62,9 +70,19 @@ class RefactorProvider implements vscode.CodeActionProvider {
 
     const actionsFromSets = AVAILABLE_ACTION_SETS.map((actionSet) =>
       actionSet(node, source, document),
-    ).flat();
+    );
 
-    return [...actions, ...actionsFromSets];
+    const actionsFromAsyncSets = await Promise.all(
+      AVAILABLE_ASYNC_ACTION_SETS.map((actionSet) =>
+        actionSet(node, source, document),
+      ),
+    );
+
+    return [
+      ...actions,
+      ...actionsFromSets.flat(),
+      ...actionsFromAsyncSets.flat(),
+    ];
   }
 }
 
