@@ -181,7 +181,7 @@ const scrollTopBefore = _.get(document, "body.scrollTop");
 And replace it with a chain of access expressions:
 
 ```js
-const appliedOffer = CartStore.offer ?? null;
+const appliedOffer = cart.offer ?? null;
 
 // If your call has a default value, all the access expressions will be null coalescing
 const message = error?.errors?.[0].message ?? error.message;
@@ -192,6 +192,7 @@ const scrollTopBefore = document.body.scrollTop;
 ## Case switch to if
 
 Will take in an arbitrary case switch like:
+
 ```js
 function getCardContent(cardType) {
   switch (cardType) {
@@ -208,6 +209,7 @@ function getCardContent(cardType) {
 ```
 
 And replace it with a series of if statements:
+
 ```js
 function getCardContent(cardType) {
   if (cardType === "menu" || cardType === "banana") {
@@ -215,8 +217,32 @@ function getCardContent(cardType) {
     return;
   }
   if (cardType === "apple") {
-      return "Apples are red and crunchy. Usually. Maybe.";
+    return "Apples are red and crunchy. Usually. Maybe.";
   }
   return "Click here to buy fantastic products:";
 }
+```
+
+## Convert casing
+
+Can take any identifier (like a variable name) or string literal like:
+
+```js
+const someVariable = "Hello, here is some text. I love text! It's fantastic.";
+```
+
+And convert either the variable or string to one of:
+
+- camelCase
+- PascalCase
+- CONSTANT_CASE
+- kebab-case
+- snake_case
+
+When renaming variable, this action will use
+[the built-in command](https://code.visualstudio.com/api/references/commands) to rename all instances of that symbol at once.
+
+Like:
+```js
+const SOME_VARIABLE = "hello-here-is-some-text-i-love-text-its-fantastic";
 ```
